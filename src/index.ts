@@ -1,16 +1,14 @@
 import express from 'express'
-// import usersRouter from './routes/user.router'
-// import taskRouters from './routes/task.router'
 import mongoose, { mongo } from "mongoose";
 import * as dotenv from "dotenv";
+import userRouter from './routes/user.router';
 dotenv.config({ path: __dirname+ '/../.env' });
 
 const app = express()
 app.use(express.json())
 
-console.log("HERE ROUTERS")
-// app.use('/users',usersRouter)
-// app.use('/tasks',taskRouters)
+
+app.use('/users',userRouter)
 
 const PORT = process.env.PORT
 
