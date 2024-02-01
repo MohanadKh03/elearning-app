@@ -8,22 +8,42 @@ export class UserController{
         const response : ApiResponse = await UserService.getUsers()
         return res.status(response.status).json(response)
     }
-    static async createUser(req: Request,res: Response){
-        const user = req.body as IUser;
-        const response : ApiResponse = await UserService.createUser(user)
-        return res.status(response.status).json(response)
+    static async getUser(req: Request,res: Response,next: any){
+        try{
+            const userId = req.params.id
+            const response : ApiResponse = await UserService.getUser(userId)
+            return res.status(response.status).json(response)
+        }catch(err){
+            next(err)
+        }
     }
-    static async updateUser(req: Request,res: Response){
-        const userId = req.params.id
-        const user = req.body as IUser
-        console.log("HERE CONTROLLER");
+    static async createUser(req: Request,res: Response,next: any){
+        try{
+            const user = req.body as IUser;
+            const response : ApiResponse = await UserService.createUser(user)
+            return res.status(response.status).json(response)
+        }catch(err){
+            next(err)
+        }
+    }
+    static async updateUser(req: Request,res: Response,next: any){
+        try{
+            const userId = req.params.id
+            const user = req.body as IUser
 
-        const response : ApiResponse = await UserService.updateUser(userId,user)
-        return res.status(response.status).json(response)
+            const response : ApiResponse = await UserService.updateUser(userId,user)
+            return res.status(response.status).json(response)
+        }catch(err){
+            next(err)
+        }
     }
-    static async deleteUser(req: Request,res: Response){
-        const userId = req.params.id
-        const response : ApiResponse = await UserService.deleteUser(userId)
-        return res.status(response.status).json(response)
+    static async deleteUser(req: Request,res: Response,next: any){
+        try{
+            const userId = req.params.id
+            const response : ApiResponse = await UserService.deleteUser(userId)
+            return res.status(response.status).json(response)
+        }catch(err){
+            next(err)
+        }
     }
 }
