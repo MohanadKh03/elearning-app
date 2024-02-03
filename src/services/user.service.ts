@@ -1,11 +1,11 @@
-import { IUser }  from '../models/user.model';
+import { IUser }  from '../models/types/user.model';
 import { ApiResponse } from '../utils/api.response';
 import bcrypt from "bcrypt";
 import  userSchema  from "../models/validators/validator.user"
 import { UserRepository } from '../repositories/user.repository';
 import mongoose,{ ObjectId, isValidObjectId } from "mongoose"
 import  *  as exceptions from "../exceptions/errors"
-import Joi from 'joi';
+import Joi, { exist } from 'joi';
 export class UserService{
     static async getUsers() : Promise<ApiResponse>{
         const users = await UserRepository.getUsers();
@@ -24,10 +24,9 @@ export class UserService{
 
 
     static async createUser(user: IUser) : Promise<ApiResponse>{
-        const { error, value } = userSchema.validate(user,{ abortEarly: false });
+        const { error } = userSchema.validate(user,{ abortEarly: false });
         if(error)
             throw new Joi.ValidationError(error.message, error.details, error)
-
         user.password = await bcrypt.hash(user.password, 10)
         const createdUser = await UserRepository.createUser(user);
         return {message: "User created successfully!", body: createdUser , status: 201}
@@ -35,9 +34,6 @@ export class UserService{
 
 
     static async updateUser(userId: string,user: IUser) : Promise<ApiResponse>{
-        const { error, value } = userSchema.validate(user,{ abortEarly: false });
-        if(error)
-            throw new Joi.ValidationError(error.message, error.details, error)
         if(!isValidObjectId(userId))
             throw new exceptions.InvalidInput("Invalid user id!")
         

@@ -1,12 +1,16 @@
-import { Request, Response } from "express"
+import { NextFunction, Request, Response } from "express"
 import { ApiResponse } from "../utils/api.response"
 import { UserService } from "../services/user.service"
-import { IUser } from "../models/user.model";
+import { IUser } from "../models/types/user.model";
 
 export class UserController{
-    static async getUsers(req: Request,res: Response){
-        const response : ApiResponse = await UserService.getUsers()
-        return res.status(response.status).json(response)
+    static async getUsers(req: Request,res: Response,next: NextFunction){
+        try{
+            const response : ApiResponse = await UserService.getUsers()
+            return res.status(response.status).json(response)
+        }catch(err){
+            next(err)
+        }
     }
     static async getUser(req: Request,res: Response,next: any){
         try{

@@ -12,3 +12,10 @@ export class NotFound extends Error{
         this.message = message;
     }
 }
+export class InternalServerError extends Error{
+    constructor(message: string) {
+        super(message);
+        this.name = 'InternalServerError';
+        this.message = message;
+    }
+}

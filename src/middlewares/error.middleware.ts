@@ -29,7 +29,13 @@ const errorHandler = (err: Error, req: Request, res: Response, next: any) => {
             message: err.message,
             body: null
         });
-    } else {
+    } else if(err instanceof exceptions.NotFound){
+        return res.status(404).json({
+            status: 404,
+            message: err.message,
+            body: null
+        });
+    }else {
         return res.status(500).json({
             status: 500,
             message: 'Internal Server Error',

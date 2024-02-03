@@ -5,6 +5,8 @@ const userRouter = express.Router();
 
 userRouter.get('/', UserController.getUsers);
 
+userRouter.get('/:id', UserController.getUser);
+
 userRouter.post('/create', UserController.createUser);
 
 userRouter.put('/:id', UserController.updateUser);

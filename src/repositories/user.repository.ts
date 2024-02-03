@@ -1,5 +1,5 @@
-import { IUser } from "../models/user.model";
-import User from "../models/user.model";
+import { IUser } from "../models/types/user.model";
+import User from "../models/types/user.model";
 
 export class UserRepository{
     static async getUsers() : Promise<IUser[]>{

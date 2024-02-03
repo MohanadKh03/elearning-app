@@ -2,14 +2,26 @@ import express from 'express'
 import mongoose, { mongo } from "mongoose";
 import * as dotenv from "dotenv";
 import userRouter from './routes/user.router';
+import courseRouter from './routes/course.router';
 import  errorHandler  from './middlewares/error.middleware'
+import * as cloudinary from 'cloudinary';
+import multer from 'multer';
+
+
+
+
 dotenv.config({ path: __dirname+ '/../.env' });
 
+
 const app = express()
+
+const upload = multer({ dest: 'uploads/' });
+
+app.use(upload.single('courseImage'));
 app.use(express.json())
 
-
 app.use('/users',userRouter)
+app.use("/courses",courseRouter)
 
 app.use(errorHandler)
 
