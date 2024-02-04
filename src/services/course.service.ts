@@ -20,16 +20,18 @@ export class CourseService{
         else{
             let course = result.body as ICourse;
             let studentsIds: mongoose.Types.ObjectId[] = course.students
+
             let students: IUser[] = []
-            studentsIds.forEach((studentId) => {
-                UserService.getUser(studentId.toString())
-                    .then((response) => {
-                        if(response.status === 200)
-                            students.push(response.body)
-                        else
-                            throw new Error("Unexpected behavior!")
-                    })
-            })
+            const promises = studentsIds.map(async (studentId) => {
+                let result = await UserService.getUser(studentId.toString());
+                if (result.status === 200) {
+                    students.push(result.body as IUser);
+                } else {
+                    throw new exceptions.NotFound("Student with id {" + studentId + "} not found!")
+                }
+            });
+            await Promise.all(promises);
+            
             return {message: "Students fetched successfully!", body: students , status: 200}
         }
     }
@@ -66,6 +68,23 @@ export class CourseService{
         return {message: "Course created successfully!", body: createdCourse , status: 201}
     }
 
+    static async enrollStudentInCourse(courseId: string,studentId: string) : Promise<ApiResponse>{
+        if(!isValidObjectId(courseId))
+            throw new exceptions.InvalidInput("Invalid course id!")
+        if(!isValidObjectId(studentId))
+            throw new exceptions.InvalidInput("Invalid student id!")
+        const course = await CourseRepository.getCourse(courseId);
+        if(course === null)
+            throw new exceptions.NotFound("Course not found!")
+        const student = await UserService.getUser(studentId);
+        if(student.status !== 200)
+            throw new exceptions.NotFound("Student not found!")
+        course.students.push(new mongoose.Types.ObjectId(studentId));
+       
+        const updatedCourse = await CourseRepository.updateCourse(courseId,course);
+        return {message: "Student enrolled successfully!", body: updatedCourse , status: 200}
+    }
+
     private static async uploadCourseImage(course: ICourse,imagePath: string) : Promise<void>{
         cloudinary.v2.config({
             cloud_name: process.env.CLOUD_NAME!,
@@ -93,6 +112,24 @@ export class CourseService{
         return {message: "course updated successfully!", body: updateCourse , status: 200}
     }
 
+    static async dropStudentFromCourse(courseId: string,studentId: string) : Promise<ApiResponse>{
+        if(!isValidObjectId(courseId))
+            throw new exceptions.InvalidInput("Invalid course id!")
+        if(!isValidObjectId(studentId))
+            throw new exceptions.InvalidInput("Invalid student id!")
+        const course = await CourseRepository.getCourse(courseId);
+        if(course === null)
+            throw new exceptions.NotFound("Course not found!")
+        const student = await UserService.getUser(studentId);
+        if(student.status !== 200)
+            throw new exceptions.NotFound("Student not found!")
+        let studentIndex = course.students.indexOf(new mongoose.Types.ObjectId(studentId));
+        if(studentIndex === -1)
+            throw new exceptions.NotFound("Student not found in course!")
+        course.students.splice(studentIndex,1);
+        const updatedCourse = await CourseRepository.updateCourse(courseId,course);
+        return {message: "Student dropped successfully!", body: updatedCourse , status: 200}
+    }
     
     static async deleteCourse(courseId: string) : Promise<ApiResponse>{
         if(!isValidObjectId(courseId))

@@ -56,10 +56,30 @@ export class CourseController{
             next(err)
         }
     }
+    static async enrollStudentInCourse(req: Request,res: Response,next: NextFunction){
+        try{
+            const courseId = req.params.courseId
+            const studentId = req.params.studentId
+            const response : ApiResponse = await CourseService.enrollStudentInCourse(courseId,studentId)
+            return res.status(response.status).json(response)
+        }catch(err){
+            next(err)
+        }
+    }
     static async deleteCourse(req: Request,res: Response,next: NextFunction){
         try{
             const courseId = req.params.id
             const response : ApiResponse = await CourseService.deleteCourse(courseId)
+            return res.status(response.status).json(response)
+        }catch(err){
+            next(err)
+        }
+    }
+    static async dropStudentFromCourse(req: Request,res: Response,next: NextFunction){
+        try{
+            const courseId = req.params.courseId
+            const studentId = req.params.studentId
+            const response : ApiResponse = await CourseService.dropStudentFromCourse(courseId,studentId)
             return res.status(response.status).json(response)
         }catch(err){
             next(err)
