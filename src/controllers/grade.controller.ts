@@ -7,19 +7,17 @@ export class GradeController{
             let grade = req.body as IGrade;
             console.log(grade)
             let result = await CourseService.assignGrade(grade);
-            return res.status(200).json(result);
+            return res.status(result.status).json(result);
         }catch(err){
             next(err);
         }
     }
-    //query parameter
     static async viewStudentGrade(req: Request,res: Response,next: NextFunction){
         try{
-            console.log("HERE")
             let studentId = req.params.studentId;
             let courseId = req.query.courseId as string | undefined;
             let result = await CourseService.viewStudentGrade(studentId,courseId);
-            return res.status(200).json(result);
+            return res.status(result.status).json(result);
 
         }catch(err){
             next(err);
@@ -29,7 +27,7 @@ export class GradeController{
         try{
             let courseId = req.params.courseId;
             let result = await CourseService.viewAverageCourseGrades(courseId);
-            return res.status(200).json(result);
+            return res.status(result.status).json(result);
         }catch(err){
             next(err);
         }
@@ -39,7 +37,7 @@ export class GradeController{
             let studentId = req.params.studentId;
             let courseId = req.params.courseId;
             let result = await CourseService.deleteGrade(studentId,courseId);
-            return res.status(200).json(result);
+            return res.status(result.status).json(result);
         }catch(err){
             next(err);
         }
