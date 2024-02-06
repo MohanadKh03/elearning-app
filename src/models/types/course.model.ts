@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
 export interface ICourse {
-    courseId?: mongoose.Types.ObjectId;
     title: string;
     description: string;
     imageUrl?: string; 

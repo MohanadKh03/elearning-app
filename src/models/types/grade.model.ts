@@ -1,5 +1,12 @@
 import mongoose , {mongo} from "mongoose";
 
+export interface IGrade {
+    student: mongoose.Schema.Types.ObjectId,
+    course: mongoose.Schema.Types.ObjectId,
+    grade: number,
+    feedback?: string | null | undefined
+}
+
 const gradeSchema = new mongoose.Schema({
     student: {
         type: mongoose.Schema.Types.ObjectId,
