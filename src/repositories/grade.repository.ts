@@ -8,7 +8,13 @@ import mongoose, { Aggregate } from "mongoose";
 
 
 export class GradeRepository{
+
+    static async getGrade(studentId: string,courseId: string){
+        return await Grade.find({student: studentId , course: courseId})
+    }
+
     static async assignGrade(grade: IGrade): Promise<any>{
+    
         const createdGrade = await Grade.create(grade);
         return createdGrade
     }
@@ -45,10 +51,12 @@ export class GradeRepository{
         console.log(gradesAvg)
         return gradesAvg[0].averageGrade
     }
-    static async deleteGrade(studentId: string, courseId: string): Promise<any> {
-       
-
-        let deleteGrade = await Grade.deleteOne({ student: studentId, course: courseId });
-        return deleteGrade
+    static async deleteGrade(studentId: string, courseId: string){
+        await Grade.deleteOne({ student: studentId, course: courseId });
     }
+
+    static async deleteAllStudentGrades(studentId: string){
+        await Grade.deleteMany({ student: studentId });
+    }
+
 }

@@ -6,6 +6,7 @@ export interface ICourse {
     imageUrl?: string; 
     professor: mongoose.Types.ObjectId;
     students: mongoose.Types.ObjectId[];
+    _id: mongoose.Types.ObjectId;
 }
 
 const courseSchema = new mongoose.Schema({

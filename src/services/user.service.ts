@@ -6,7 +6,13 @@ import { UserRepository } from '../repositories/user.repository';
 import mongoose,{ ObjectId, isValidObjectId } from "mongoose"
 import  *  as exceptions from "../exceptions/errors"
 import Joi, { exist } from 'joi';
+import { GradeService } from './grade.service';
+import { CourseService } from './course.service';
+
+
+
 export class UserService{
+
     static async getUsers() : Promise<ApiResponse>{
         const users = await UserRepository.getUsers();
         return {message: "Users fetched successfully!", body: users , status: 200}
@@ -43,13 +49,18 @@ export class UserService{
         return {message: "User updated successfully!", body: updatedUser , status: 200}
     }
 
-    
     static async deleteUser(userId: string) : Promise<ApiResponse>{
         if(!isValidObjectId(userId))
             throw new exceptions.InvalidInput("Invalid user id!")
         const deletedUser = await UserRepository.deleteUser(userId);
         if(deletedUser === null)
             throw new exceptions.NotFound("User not found!")
+        else{
+            if(deletedUser.role === "Student"){
+                await GradeService.deleteAllStudentGrades(userId)
+                await CourseService.dropStudentFromAllCourses(userId)
+            }
+        }
         return {message: "User deleted successfully!", body: deletedUser , status: 200} 
     }
 }
